@@ -1,0 +1,63 @@
+class Solution:
+    def getBiggestThree(self, matrix):
+
+        # num_rows is the number of rows in the matrix, num_cols is the number of columns
+        num_rows, num_cols, max_heap = len(matrix), len(matrix[0]), []
+        
+        # define a function to update the max_heap with a new number
+        # if the number is already in the max_heap, do nothing
+        # if the number is not in the max_heap, add it to the max_heap
+        # if the max_heap size exceeds 3, remove the smallest number from the max_heap
+        def update_heap(max_heap, num):
+            if num not in max_heap:
+                heappush(max_heap, num)
+                if len(max_heap) > 3: 
+                    heappop(max_heap)
+            return max_heap
+        
+        # flatten the matrix into a list of numbers and add each number to the max_heap
+        for num in chain(*matrix): 
+            update_heap(max_heap, num)
+          
+        # define a dynamic programming function to find the sum of a submatrix of the given matrix
+        # the submatrix is defined by the starting position (row,col) and the size of the submatrix (diagonal_length)
+        # the function returns the sum of the submatrix
+        
+        @lru_cache(None)
+        #Least Recently Used (LRU) cache discards the least recently used items first. It is a powerful tool to optimize the performance of a function by avoiding unnecessary computation.
+        
+        def calculate_submatrix_sum(row,col, dr):           #dr=direction
+
+            # if the starting position (i, j) is out of bounds, return 0
+            if not 0 <= row < num_cols or not 0 <= col < num_rows: return 0
+
+            # return the sum of the submatrix by adding the current element in the matrix and the sum of the submatrix in the next row
+            return calculate_submatrix_sum(row-1, col+dr, dr) + matrix[col][row]
+        
+        # for each possible size of the submatrix (from 1 to the smaller of num_rows and num_cols divided by 2)
+        for diagonal_length in range(1, (1 + min(num_rows, num_cols))//2):
+
+            # for each starting row index
+            for row in range(diagonal_length, num_cols - diagonal_length):
+
+                # for each starting column index
+                for col in range(diagonal_length, num_rows - diagonal_length):
+
+                    # calculate the sum of the submatrix starting at (row,col) with size = diagonal_length
+                    # the submatrix is in the form of a cross, with 4 arms
+
+                    # top_sum is the sum of the top arm of the cross
+                    top_sum = calculate_submatrix_sum(row + diagonal_length, col, -1) - calculate_submatrix_sum(row, col - diagonal_length, -1)
+                    # left_sum is the sum of the left arm of the cross
+                    left_sum = calculate_submatrix_sum(row - 1, col + diagonal_length - 1, -1) - calculate_submatrix_sum(row - diagonal_length - 1, col-1,-1)
+                    #bottom_sum is the sum of the bottom arm of the cross
+                    bottom_sum = calculate_submatrix_sum(row,col-diagonal_length,1) - calculate_submatrix_sum(row - diagonal_length,col,1)
+                    #right_sum is the sum of the right arm of the cross
+                    right_sum = calculate_submatrix_sum(row + diagonal_length - 1, col +1 ,1) - calculate_submatrix_sum(row - 1,col + diagonal_length + 1,1)
+
+                     # add the sum of the submatrix to the heap
+                    update_heap(max_heap, top_sum + left_sum + bottom_sum + right_sum)
+
+        #return the values
+        return sorted(max_heap)[::-1]
+
