@@ -1,0 +1,18 @@
+from typing import List
+
+class Solution:
+    def minimumCardPickup(self, cards: List[int]) -> int:
+        ans = float("inf")
+        # Use a dictionary to store the indices of each card value
+        card_indices = {}
+        for i, card in enumerate(cards):
+            # If a card with this value has been seen before, update ans
+            if card in card_indices:
+                ans = min(ans, i - card_indices[card] + 1)
+            # Update the index of this card value
+            card_indices[card] = i
+        # If no matching cards are found, return -1
+        if ans == float("inf"):
+            return -1
+        # Otherwise, return the minimum number of cards to pick up
+        return ans
