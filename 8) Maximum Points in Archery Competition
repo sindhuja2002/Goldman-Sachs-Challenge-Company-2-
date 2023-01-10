@@ -1,0 +1,45 @@
+class Solution:
+    def maximumBobPoints(self, numArrows: int, aliceArrows: List[int]) -> List[int]:
+        final_vector = []
+        overall_max = 0
+
+# -final_vector- is a list that will store the final arrow placements that maximize Bob's score and
+# -overall_max- is a variable that will store the maximum score Bob can achieve.
+        
+        def solve(aliceArrows, bobArrows, cur_max, num_arrows, ind):
+
+#recursive function that tries all possible combinations of arrow placements for Bob and returns the one that maximizes his score. 
+
+#aliceArrows,bobArrows - lists representing the number of arrows shot by Alice and Bob
+# cur_max   - stores the current maximum score Bob can achieve. 
+#num_arrows - number of arrows Bob has remaining to shoot
+#ind        - index representing the current section of the target that Bob is shooting on. 
+
+            nonlocal overall_max  
+            nonlocal final_vector
+            #nonlocal - keyword modified within to the solve function.
+
+            if num_arrows == 0 or ind < 0:
+                if overall_max < cur_max:
+                    overall_max = cur_max
+                    final_vector = bobArrows[:]
+                return
+#base case for the recursive function . If we are at the lowest scoring section, Bob must shoot all of his remaining arrows here.
+
+            if ind == 0:
+                bobArrows[ind] = num_arrows
+                solve(aliceArrows, bobArrows, cur_max + ind, 0, ind - 1)
+                bobArrows[ind] = 0
+                return
+#If Bob has more arrows than Alice at this scoring section, he should shoot all of them.
+            elif num_arrows >= aliceArrows[ind] + 1:
+                bobArrows[ind] = aliceArrows[ind] + 1
+                solve(aliceArrows, bobArrows, cur_max + ind, num_arrows - (aliceArrows[ind] + 1), ind - 1)
+                bobArrows[ind] = 0
+#Otherwise, Bob should shoot as many arrows as he can without exceeding Alice's score.
+            solve(aliceArrows, bobArrows, cur_max, num_arrows, ind - 1)
+
+        bob_arrows = [0] * 12
+# Start the recursive function with Bob's initial score set to 0 and all arrow placements set to 0
+        solve(aliceArrows, bob_arrows, 0, numArrows, 11)
+        return final_vector    #used a recursive function 
