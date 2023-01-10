@@ -1,0 +1,48 @@
+from typing import List
+
+class Solution:
+  def invalidTransactions(self, transactions: List[str]) -> List[str]:
+    # Create lists for name, time, amount, and city
+    names = []
+    times = []
+    amounts = []
+    cities = []
+
+    # Split the transactions into individual fields and add them to the lists
+    for transaction in transactions:
+      # Split the transaction into name, time, amount, and city
+      name, time, amount, city = transaction.split(",")
+      # Add the name to the names list
+      names.append(name)
+      # Add the time as an integer to the times list
+      times.append(int(time))
+      # Add the amount as an integer to the amounts list
+      amounts.append(int(amount))
+      # Add the city to the cities list
+      cities.append(city)
+
+    # Create a list to store invalid transactions
+    invalid = []
+
+    # Add transactions that exceed $1000 to the invalid list
+    for i, amount in enumerate(amounts):
+      if amount > 1000:
+        invalid.append(transactions[i])
+
+    # Add transactions with the same name and a different city within 60 minutes to the invalid list
+    for i, name in enumerate(names):
+      # Iterate over the other transactions
+      for j, other_name in enumerate(names):
+        # Check if the transaction has the same name and a different city
+        if name == other_name and cities[i] != cities[j]:
+          # Check if the time difference between the transactions is less than or equal to 60 minutes
+          if abs(times[i] - times[j]) < 61:
+            # Check if the amount of the current transaction is less than or equal to $1000
+            if amounts[i] <= 1000:
+              # Add the current transaction to the invalid list
+              invalid.append(transactions[i])
+            # Break out of the inner loop since the current transaction has already been added to the invalid list
+            break
+
+    # Return the list of invalid transactions
+    return invalid
