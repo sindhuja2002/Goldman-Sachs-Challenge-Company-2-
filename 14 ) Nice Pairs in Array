@@ -1,0 +1,21 @@
+class Solution:
+    def rev(self, number: int) -> int:  # function to find reverse of a number
+        reverse = 0
+        while number != 0:
+            reverse = reverse * 10 + number % 10
+            number //= 10  # integer division
+        return reverse
+        
+
+    def countNicePairs(self, numbers: List[int]) -> int:
+        number_count = {}  # dictionary to store count of difference (nums[i] - rev(nums[i]))
+        result = 0
+        for i in range(len(numbers)):
+            difference = numbers[i] - self.rev(numbers[i])
+            if difference in number_count:
+                number_count[difference] += 1
+            else:
+                number_count[difference] = 1
+            result = (result + number_count[difference] - 1) % 1000000007  # adding up the pair count, taking modulo to avoid overflow
+        return result % 1000000007
+
