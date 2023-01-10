@@ -1,0 +1,35 @@
+class Solution:
+    def findMaximizedCapital(self, k: int, w: int, profits: List[int], capital: List[int]) -> int:
+# create a heap to store the available projects (sorted by profit)
+        available_projects = []
+# create a heap to store the not yet available projects (sorted by capital required)
+        not_available_projects = []
+
+# iterate through the profits and capital
+        for profit, capital_required in zip(profits, capital):
+        # if the capital required is less than or equal to the current capital, it means this project is available
+            if capital_required <= w:
+                heappush(available_projects, -profit)
+        # if the capital required is more than the current capital, it means this project is not yet available
+            else:
+                heappush(not_available_projects, (capital_required, -profit))
+    
+    # iterate through the number of projects to be completed
+        for _ in range(k):
+        # if there are no more available projects, return the current capital
+            if not available_projects:
+                    return w
+        # otherwise, get the project with the highest profit
+            highest_profit = heappop(available_projects)
+        # add the profit to the current capital
+            w -= highest_profit
+        # while there are not yet available projects and the current capital is more than the capital required for the project,
+        # add the project to the available projects heap
+            while not_available_projects and w >= not_available_projects[0][0]:
+                capital_required, profit = heappop(not_available_projects)
+                heappush(available_projects, profit)
+    
+    # return the final capital after completing at most k projects
+        return w
+
+
