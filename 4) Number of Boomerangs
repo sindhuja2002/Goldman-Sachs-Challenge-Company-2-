@@ -1,0 +1,24 @@
+from collections import defaultdict
+
+class Solution:
+    def numberOfBoomerangs(self, points: List[int]) -> int:
+        # Initialize result
+        result = 0
+        
+        # Iterate through each point
+        for p in points:
+            # Create a dictionary to store the number of points at each distance
+            cnt = defaultdict(int)
+            # Iterate through the other points
+            for q in points:
+                # Calculate the distance between p and q
+                f = p[0]-q[0]
+                s = p[1]-q[1]
+                d = f*f + s*s
+                # Increment the count for this distance
+                cnt[d] += 1
+            # Iterate through the counts of the distances
+            for k in cnt:
+                # Add the number of permutations of these distances to the result
+                result += cnt[k] * (cnt[k] -1)
+        return result
