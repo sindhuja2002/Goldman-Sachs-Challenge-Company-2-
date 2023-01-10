@@ -1,0 +1,29 @@
+from sortedcontainers import SortedList
+
+class Solution:
+    def goodTriplets(self, nums1: List[int], nums2: List[int]) -> int:
+        # Index of a (from nums1) in nums2.
+        indices = [0] * len(nums1)               
+        for i, b in enumerate(nums2):
+            indices[b] = i
+        
+        # Build left_count[i]: number of elements on nums1[i]'s left in both nums1 and nums2.
+        # nums2_indices: sorted indexes (in nums2) of all the visited elements in nums1.
+        nums2_indices, left_count = SortedList([indices[nums1[0]]]), [0]      
+        for a in nums1[1:]:       
+            nums2_indices.add(indices[a])
+            left_count.append(nums2_indices.bisect_left(indices[a]))
+    
+        # Build right_count[i]: number of elements on nums1[i]'s right in both nums1 and nums2.
+        nums2_indices, right_count = SortedList([indices[nums1[-1]]]), [0]
+        for a in reversed(nums1[:len(nums1)-1]):
+            idx = nums2_indices.bisect(indices[a])
+            right_count.append(len(nums2_indices) - idx)
+            nums2_indices.add(indices[a])
+        right_count.reverse()
+        
+        # Sum up all unique triplets centered on nums1[i].
+        ans = 0
+        for x, y in zip(left_count, right_count):
+            ans += x * y
+        return ans
