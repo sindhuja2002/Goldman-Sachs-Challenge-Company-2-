@@ -1,0 +1,25 @@
+class Solution:
+    def maximumGood(self, statements: List[List[int]]) -> int:
+        n = len(statements)
+        good = [False] * n # Create a list of n elements and initialize them all to false
+        def backtrack(i):
+            if i == n: # If we have considered all the people
+                is_valid = True
+                for i in range(n):
+                    if good[i]: # If person i is considered good
+                        for j in range(n):
+                            if statements[i][j] != 2 and statements[i][j] != good[j]:
+                                # If the statement made by i about j is not true
+                                is_valid = False
+                                break
+                    if not is_valid:
+                        break
+                if is_valid:
+                    return good.count(True)
+                return 0
+            good[i] = True
+            res1 = backtrack(i + 1)
+            good[i] = False
+            res2 = backtrack(i + 1)
+            return max(res1, res2)
+        return backtrack(0)
