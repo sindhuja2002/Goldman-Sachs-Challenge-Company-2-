@@ -1,0 +1,21 @@
+from collections import Counter
+
+class Solution:
+    def isPossible(self, nums: List[int]) -> bool:
+        freq_map = Counter(nums)
+        head_map = Counter()
+        for i in nums:
+            if freq_map[i] == 0:
+                continue
+            if head_map[i] > 0:
+                head_map[i] -= 1
+                head_map[i+1] += 1
+                freq_map[i] -= 1
+            elif freq_map[i] > 0 and freq_map[i+1] > 0 and freq_map[i+2] > 0:
+                freq_map[i] -= 1
+                freq_map[i+1] -= 1
+                freq_map[i+2] -= 1
+                head_map[i+3] += 1
+            else:
+                return False
+        return True
