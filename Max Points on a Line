@@ -1,0 +1,47 @@
+class Solution:
+    def maxPoints(self, points: List[List[int]]) -> int:
+        # Edge case: if there are less than 3 points, the maximum number of points that lie on the same straight line is the number of points
+        if len(points) < 3:
+            return len(points)
+
+        # Initialize result to 0
+        result = 0
+
+        # Iterate through each point
+        for i in range(len(points)):
+            # Initialize a dictionary to store the slope of each line formed by the current point and other points
+            slopes = {}
+            # Initialize a variable to store the maximum number of points on the same line with the current point
+            same_point_count = 0
+            # Initialize a variable to store the maximum number of points on the same line with the current point
+            max_points_on_line = 0
+
+            # Iterate through the remaining points
+            for j in range(i+1, len(points)):
+                # Calculate the slope of the line formed by the current point and the other point
+                dx = points[j][0] - points[i][0]
+                dy = points[j][1] - points[i][1]
+
+                # If dx is 0, the slope is infinity
+                if dx == 0:
+                    slope = float('inf')
+                else:
+                    slope = dy / dx
+
+                # If the slope already exists in the dictionary, increment the count by 1
+                if slope in slopes:
+                    slopes[slope] += 1
+                # Otherwise, add the slope to the dictionary with a count of 1
+                else:
+                    slopes[slope] = 1
+
+            # Update the maximum number of points on the same line with the current point
+            for slope, count in slopes.items():
+                max_points_on_line = max(max_points_on_line, count)
+
+            # Update the result
+            result = max(result, max_points_on_line + same_point_count + 1)
+
+        # Return the result
+        return result
+   
