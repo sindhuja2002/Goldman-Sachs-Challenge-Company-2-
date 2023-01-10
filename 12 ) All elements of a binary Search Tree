@@ -1,0 +1,32 @@
+from typing import List
+
+class Solution:
+  def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]:
+    # Create an empty list to store the values from both trees
+    values = []
+
+    # In-order traversal of the first tree and add the values to the list
+    def inorder(node):
+      if not node:
+        return
+      inorder(node.left)
+      values.append(node.val)
+      inorder(node.right)
+
+    inorder(root1)
+
+    # In-order traversal of the second tree and add the values to the list
+    def inorder(node):
+      if not node:
+        return
+      inorder(node.left)
+      values.append(node.val)
+      inorder(node.right)
+
+    inorder(root2)
+
+    # Sort the values in ascending order
+    values.sort()
+
+    return values
+
